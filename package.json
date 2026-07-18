@@ -1,0 +1,24 @@
+{
+  "name": "@nairon-ai/grill-visuals",
+  "version": "0.0.0",
+  "description": "Beautiful, shareable diagrams for Grill Me sessions",
+  "license": "Apache-2.0",
+  "type": "module",
+  "private": true,
+  "bin": {
+    "grill-visuals": "./bin/grill-visuals.mjs"
+  },
+  "files": [
+    "bin",
+    "src",
+    "LICENSE",
+    "THIRD_PARTY_NOTICES.md"
+  ],
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "check": "node --check bin/grill-visuals.mjs && node --check src/contracts.mjs && node --test",
+    "test": "node --test"
+  }
+}
