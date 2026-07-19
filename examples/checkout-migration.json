@@ -1,0 +1,99 @@
+{
+  "version": 1,
+  "id": "checkout-architecture",
+  "family": "architecture",
+  "title": "How should checkout cross the new payment boundary?",
+  "summary": "The migration keeps order ownership internal while isolating payment authorization and asynchronous receipts.",
+  "status": "current",
+  "options": [
+    { "id": "internal-order-owner", "label": "Keep order ownership internal", "description": "Preserves one internal source of truth while isolating authorization behind a narrow provider boundary.", "recommended": true, "highlights": ["customer", "checkout-api", "order-service", "order-store", "order-events", "receipt-worker"] },
+    { "id": "provider-owned-order", "label": "Let the provider own order state", "description": "Reduces internal code but couples product state, recovery, and customer support to an external payment model.", "highlights": ["order-service", "payment-provider"] },
+    { "id": "dual-write-migration", "label": "Dual-write during migration", "description": "May smooth cutover, but creates reconciliation and partial-failure risk across two authorities.", "highlights": ["checkout-api", "payment-provider", "order-store"] }
+  ],
+  "data": {
+    "project": {
+      "name": "Shopify storefront",
+      "iconDomain": "shopify.com"
+    },
+    "nodes": [
+      {
+        "id": "customer",
+        "label": "Customer",
+        "kind": "user",
+        "description": "Confirms cart and payment method",
+        "detail": "The customer should see one checkout action even while the backend migrates.",
+        "tags": ["web", "mobile"]
+      },
+      {
+        "id": "checkout-api",
+        "label": "Checkout API",
+        "kind": "entry",
+        "description": "Owns validation and idempotency",
+        "detail": "The public boundary remains stable during the migration.",
+        "sourceRef": "apps/api/src/checkout.ts",
+        "tags": ["POST /checkout"]
+      },
+      {
+        "id": "risk-agent",
+        "label": "Risk agent",
+        "kind": "agent",
+        "description": "Scores unusual purchase patterns",
+        "sourceRef": "packages/risk/src/score.ts",
+        "tags": ["bounded", "advisory"]
+      },
+      {
+        "id": "order-service",
+        "label": "Order service",
+        "kind": "service",
+        "description": "Owns order state and totals",
+        "group": "Payment boundary",
+        "sourceRef": "packages/orders/src/service.ts",
+        "tags": ["source of truth"]
+      },
+      {
+        "id": "payment-provider",
+        "label": "Stripe",
+        "kind": "external",
+        "domain": "stripe.com",
+        "description": "Authorizes the customer payment",
+        "group": "Payment boundary",
+        "detail": "External calls use one idempotency key per order attempt.",
+        "tags": ["PCI boundary"]
+      },
+      {
+        "id": "order-store",
+        "label": "Neon Postgres",
+        "kind": "store",
+        "domain": "neon.tech",
+        "description": "Persists order and payment state",
+        "group": "Payment boundary",
+        "tags": ["Postgres"]
+      },
+      {
+        "id": "order-events",
+        "label": "Upstash queue",
+        "kind": "queue",
+        "domain": "upstash.com",
+        "description": "Decouples post-checkout work",
+        "tags": ["at least once"]
+      },
+      {
+        "id": "receipt-worker",
+        "label": "Receipt worker",
+        "kind": "job",
+        "description": "Sends the confirmed order receipt",
+        "sourceRef": "workers/receipt.ts",
+        "tags": ["retryable"]
+      }
+    ],
+    "edges": [
+      { "source": "customer", "target": "checkout-api", "kind": "calls", "label": "checks out" },
+      { "source": "checkout-api", "target": "risk-agent", "kind": "calls", "label": "scores" },
+      { "source": "checkout-api", "target": "order-service", "kind": "calls", "label": "creates order" },
+      { "source": "order-service", "target": "payment-provider", "kind": "calls", "label": "authorizes" },
+      { "source": "order-service", "target": "order-store", "kind": "writes", "label": "commits state" },
+      { "source": "order-service", "target": "order-events", "kind": "publishes", "label": "order confirmed" },
+      { "source": "order-events", "target": "receipt-worker", "kind": "triggers", "label": "delivery" }
+    ]
+  }
+}

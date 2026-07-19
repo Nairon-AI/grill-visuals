@@ -1,0 +1,32 @@
+{
+  "version": 1,
+  "id": "question-readiness-state",
+  "family": "state",
+  "title": "When is a grilling question ready to leave the round?",
+  "summary": "A question advances only when evidence and business context make it answerable; missing company knowledge is delegated without losing session state.",
+  "status": "current",
+  "options": [
+    { "id": "delegate-gap", "label": "Delegate the context gap", "description": "Preserves the session, sends one complete teammate ask, then resumes with the answer.", "recommended": true, "highlights": ["evidence", "blocked", "delegated", "company-fact-missing", "copy-ask", "teammate-replies"] },
+    { "id": "assume-locally", "label": "Make a local assumption", "description": "Faster, but unsafe when the missing fact changes business behavior or ownership.", "highlights": ["evidence", "answerable", "evidence-complete"] },
+    { "id": "pause-session", "label": "Pause the session", "description": "Avoids a bad assumption but loses momentum and makes handoff harder.", "highlights": ["blocked"] }
+  ],
+  "data": {
+    "states": [
+      { "id": "draft", "label": "Draft", "description": "Question exists but may still hide assumptions", "kind": "initial" },
+      { "id": "evidence", "label": "Evidence seeking", "description": "Repo, docs, and current behavior are being checked", "kind": "normal" },
+      { "id": "answerable", "label": "Answerable", "description": "Context and choices are clear enough for the owner", "kind": "success", "detail": "The recommendation explains technical and business consequences." },
+      { "id": "blocked", "label": "Context blocked", "description": "A required company fact is unavailable locally", "kind": "failure" },
+      { "id": "delegated", "label": "Delegated", "description": "A teammate ask packet is waiting for an answer", "kind": "normal" },
+      { "id": "resolved", "label": "Resolved", "description": "The answer is recorded in the decision log", "kind": "terminal" }
+    ],
+    "transitions": [
+      { "id": "scan-context", "source": "draft", "target": "evidence", "event": "scan context", "description": "Inspect the repository and relevant documentation." },
+      { "id": "evidence-complete", "source": "evidence", "target": "answerable", "event": "evidence complete", "guard": "choices are mutually exclusive" },
+      { "id": "company-fact-missing", "source": "evidence", "target": "blocked", "event": "company fact missing", "guard": "cannot infer safely" },
+      { "id": "copy-ask", "source": "blocked", "target": "delegated", "event": "copy teammate ask", "description": "Package context, recommendation, question, and visual." },
+      { "id": "teammate-replies", "source": "delegated", "target": "evidence", "event": "teammate replies", "description": "Resume the same session with the new fact." },
+      { "id": "developer-answers", "source": "answerable", "target": "resolved", "event": "developer answers" },
+      { "id": "new-gap", "source": "answerable", "target": "evidence", "event": "new gap appears", "guard": "answer exposes another dependency" }
+    ]
+  }
+}
