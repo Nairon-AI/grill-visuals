@@ -13,6 +13,8 @@
 
 ---
 
+<img src="assets/grill-visuals-checkout-architecture.png" alt="Grill Visuals architecture diagram for a checkout payment-boundary decision" width="100%" />
+
 _See the decision. Understand the tradeoff. Share it only when needed._
 
 </div>
