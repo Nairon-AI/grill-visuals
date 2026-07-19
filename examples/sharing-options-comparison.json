@@ -1,0 +1,50 @@
+{
+  "version": 1,
+  "id": "sharing-options-comparison",
+  "family": "comparison",
+  "title": "Which hosting model should Grill Visuals use for explicit sharing?",
+  "summary": "Cloudflare Pages best matches immutable static artifacts and local-first generation; a Worker adds control but also storage, auth, and deletion complexity.",
+  "status": "resolved",
+  "options": [
+    { "id": "use-pages", "label": "Use Cloudflare Pages", "description": "Deploys the existing inert artifact with immutable URLs and the least new operational surface.", "recommended": true, "highlights": ["pages", "simplicity", "immutability"] },
+    { "id": "use-worker-kv", "label": "Use Worker + KV", "description": "Best access control, but it creates a backend, storage contract, and provider coupling.", "highlights": ["worker-kv", "privacy", "unshare"] },
+    { "id": "use-object-storage", "label": "Use object storage", "description": "Portable and cheap, but aliases, cache invalidation, and verified deletion need more custom work.", "highlights": ["object-storage", "cost", "portability"] }
+  ],
+  "data": {
+    "options": [
+      { "id": "pages", "label": "Cloudflare Pages", "summary": "Deploy the self-contained site as an owned static project", "recommended": true },
+      { "id": "worker-kv", "label": "Worker + KV", "summary": "Store session JSON and render through a custom edge application" },
+      { "id": "object-storage", "label": "Object storage", "summary": "Upload immutable HTML behind a public bucket or CDN" }
+    ],
+    "criteria": [
+      { "id": "privacy", "label": "Privacy control", "description": "How narrowly can public exposure and deletion be managed?" },
+      { "id": "simplicity", "label": "Operational simplicity", "description": "How much new infrastructure must Grill Me own?" },
+      { "id": "immutability", "label": "Immutable versions", "description": "Can every shared revision retain an exact artifact URL?" },
+      { "id": "unshare", "label": "Verified unshare", "description": "Can the stable URL stop exposing session content predictably?" },
+      { "id": "cost", "label": "Cost", "description": "How cheaply does low-volume teammate sharing operate?" },
+      { "id": "portability", "label": "Portability", "description": "How coupled is the artifact to a proprietary runtime?" }
+    ],
+    "ratings": [
+      { "option": "pages", "criterion": "privacy", "score": 4, "rationale": "Explicit projects and deployments are recordable, but URLs are public once shared." },
+      { "option": "pages", "criterion": "simplicity", "score": 5, "rationale": "The existing inert site deploys without a custom backend." },
+      { "option": "pages", "criterion": "immutability", "score": 5, "rationale": "Each deployment receives an immutable deployment URL." },
+      { "option": "pages", "criterion": "unshare", "score": 4, "rationale": "One owned project per live share lets unshare delete the exact project and verify that the session marker is gone." },
+      { "option": "pages", "criterion": "cost", "score": 5, "rationale": "Static low-volume artifacts fit comfortably within platform limits." },
+      { "option": "pages", "criterion": "portability", "score": 4, "rationale": "The artifact is plain HTML even though deployment automation targets Cloudflare." },
+
+      { "option": "worker-kv", "criterion": "privacy", "score": 5, "rationale": "A Worker can enforce tokens, expiry, and request policy." },
+      { "option": "worker-kv", "criterion": "simplicity", "score": 2, "rationale": "It introduces an application runtime, storage model, migrations, and operational ownership." },
+      { "option": "worker-kv", "criterion": "immutability", "score": 3, "rationale": "Immutable versions need a custom key and retention contract." },
+      { "option": "worker-kv", "criterion": "unshare", "score": 5, "rationale": "Deleting or denying a storage key can take effect immediately." },
+      { "option": "worker-kv", "criterion": "cost", "score": 4, "rationale": "Runtime and storage are inexpensive but no longer zero-maintenance." },
+      { "option": "worker-kv", "criterion": "portability", "score": 2, "rationale": "Rendering and access policy become tied to Worker and KV behavior." },
+
+      { "option": "object-storage", "criterion": "privacy", "score": 3, "rationale": "Bucket policy is powerful but easy to misconfigure for anonymous links." },
+      { "option": "object-storage", "criterion": "simplicity", "score": 3, "rationale": "Upload is simple; safe public routing and cleanup still need conventions." },
+      { "option": "object-storage", "criterion": "immutability", "score": 5, "rationale": "Content-addressed object keys naturally preserve exact versions." },
+      { "option": "object-storage", "criterion": "unshare", "score": 3, "rationale": "CDN caches and aliases can outlive object deletion without careful invalidation." },
+      { "option": "object-storage", "criterion": "cost", "score": 5, "rationale": "Small static artifacts are extremely cheap to store and serve." },
+      { "option": "object-storage", "criterion": "portability", "score": 5, "rationale": "The object and URL model maps cleanly across providers." }
+    ]
+  }
+}

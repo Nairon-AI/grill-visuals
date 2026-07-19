@@ -1,0 +1,28 @@
+{
+  "version": 1,
+  "id": "diagram-priority-quadrant",
+  "family": "quadrant",
+  "title": "Which Grill Visuals capabilities deserve implementation priority?",
+  "summary": "Impact rises upward and implementation confidence rises rightward, separating immediate foundations from valuable but higher-risk public infrastructure.",
+  "status": "resolved",
+  "options": [
+    { "id": "foundations-first", "label": "Build foundations first", "description": "Prioritizes proven, high-impact diagram and continuity work before public infrastructure.", "recommended": true, "highlights": ["architecture", "state", "comparison", "handoff"] },
+    { "id": "sharing-first", "label": "Prioritize public sharing", "description": "Useful for teammates, but lower confidence and disclosure risk make it a later bet.", "highlights": ["public-share"] },
+    { "id": "collaboration-first", "label": "Explore live collaboration", "description": "Interesting future work with low current confidence and modest V1 impact.", "highlights": ["live-collab"] }
+  ],
+  "data": {
+    "axes": {
+      "x": { "label": "Implementation confidence", "low": "Unknown", "high": "Proven" },
+      "y": { "label": "Grilling impact", "low": "Helpful", "high": "Critical" }
+    },
+    "points": [
+      { "id": "architecture", "label": "Architecture", "x": 94, "y": 88, "group": "Diagram family", "description": "Makes system boundaries and blast radius visible" },
+      { "id": "sequence", "label": "Sequence", "x": 87, "y": 72, "group": "Diagram family", "description": "Clarifies ownership and timing across actors" },
+      { "id": "state", "label": "State", "x": 82, "y": 80, "group": "Diagram family", "description": "Exposes lifecycle gaps and failure recovery" },
+      { "id": "comparison", "label": "Comparison", "x": 90, "y": 76, "group": "Decision aid", "description": "Makes repeated tradeoffs directly comparable" },
+      { "id": "handoff", "label": "Grilling handoff", "x": 72, "y": 93, "group": "Continuity", "description": "Lets another developer resume without re-discovery" },
+      { "id": "public-share", "label": "Public sharing", "x": 42, "y": 61, "group": "Infrastructure", "description": "Useful for teammates but carries disclosure risk", "detail": "Explicit share and verified unshare must land together." },
+      { "id": "live-collab", "label": "Live collaboration", "x": 18, "y": 38, "group": "Infrastructure", "description": "Interesting, but outside the read-only V1 contract" }
+    ]
+  }
+}

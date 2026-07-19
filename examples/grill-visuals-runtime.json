@@ -1,0 +1,96 @@
+{
+  "version": 1,
+  "id": "grill-visuals-runtime",
+  "family": "architecture",
+  "title": "How does a Grill Me answer become a safe visual artifact?",
+  "summary": "The coding agent supplies bounded JSON; Grill Visuals validates and lays it out before producing inert, self-contained HTML for local review.",
+  "status": "current",
+  "options": [
+    { "id": "strict-local-renderer", "label": "Use a strict local renderer", "description": "Keeps analysis in the coding agent and turns only bounded JSON into an inert local artifact.", "recommended": true, "highlights": ["developer", "coding-agent", "grill-cli", "strict-contract", "layout-engine", "html-renderer", "session-files", "local-browser"] },
+    { "id": "remote-render-api", "label": "Send specs to a render API", "description": "Simplifies local setup, but sends project context across a network and creates availability coupling.", "highlights": ["coding-agent", "html-renderer", "local-browser"] },
+    { "id": "agent-authored-html", "label": "Let the agent write HTML", "description": "Maximally flexible, but breaks the strict trust boundary and makes quality unpredictable.", "highlights": ["coding-agent", "html-renderer"] }
+  ],
+  "data": {
+    "project": {
+      "name": "Grill Visuals",
+      "iconPath": "assets/grill-visuals.svg"
+    },
+    "nodes": [
+      {
+        "id": "developer",
+        "label": "Developer",
+        "kind": "user",
+        "description": "Answers through the native question UI",
+        "tags": ["decision owner"]
+      },
+      {
+        "id": "coding-agent",
+        "label": "Coding agent",
+        "kind": "agent",
+        "description": "Turns settled context into bounded JSON",
+        "detail": "The agent chooses content, never coordinates, colors, HTML, or JavaScript.",
+        "tags": ["repo-aware", "redacted"]
+      },
+      {
+        "id": "grill-cli",
+        "label": "grill-visuals CLI",
+        "kind": "entry",
+        "description": "Owns the local artifact lifecycle",
+        "sourceRef": "dist/bin/grill-visuals.js",
+        "tags": ["init", "upsert", "render"]
+      },
+      {
+        "id": "strict-contract",
+        "label": "Strict contract",
+        "kind": "service",
+        "description": "Rejects unknown or unsafe structures",
+        "group": "Render pipeline",
+        "sourceRef": "src/contracts.ts",
+        "tags": ["40 nodes max", "80 edges max"]
+      },
+      {
+        "id": "layout-engine",
+        "label": "Layout engine",
+        "kind": "service",
+        "description": "Computes deterministic orthogonal routes",
+        "group": "Render pipeline",
+        "sourceRef": "src/layout.ts",
+        "tags": ["ELK", "build time"]
+      },
+      {
+        "id": "html-renderer",
+        "label": "HTML renderer",
+        "kind": "service",
+        "description": "Builds the interactive chart shell",
+        "group": "Render pipeline",
+        "sourceRef": "src/renderer.ts",
+        "tags": ["escaped text", "a11y"]
+      },
+      {
+        "id": "session-files",
+        "label": "Session files",
+        "kind": "store",
+        "description": "Keep specs, manifest, and rendered site",
+        "tags": [".context", "gitignored"]
+      },
+      {
+        "id": "local-browser",
+        "label": "Local preview",
+        "kind": "external",
+        "description": "Displays tabs, traces, and text views",
+        "detail": "The generated page needs no network or external runtime after rendering.",
+        "tags": ["self-contained"]
+      }
+    ],
+    "edges": [
+      { "source": "developer", "target": "coding-agent", "kind": "calls", "label": "answers" },
+      { "source": "coding-agent", "target": "grill-cli", "kind": "calls", "label": "upsert JSON" },
+      { "source": "grill-cli", "target": "strict-contract", "kind": "calls", "label": "validate" },
+      { "source": "strict-contract", "target": "layout-engine", "kind": "triggers", "label": "valid only" },
+      { "source": "layout-engine", "target": "html-renderer", "kind": "triggers", "label": "coordinates" },
+      { "source": "html-renderer", "target": "session-files", "kind": "writes", "label": "index.html" },
+      { "source": "grill-cli", "target": "session-files", "kind": "writes", "label": "manifest + specs" },
+      { "source": "session-files", "target": "local-browser", "kind": "triggers", "label": "open" }
+    ]
+  }
+}

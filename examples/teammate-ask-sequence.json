@@ -1,0 +1,30 @@
+{
+  "version": 1,
+  "id": "teammate-ask-sequence",
+  "family": "sequence",
+  "title": "How does a vague grilling question become answerable by a teammate?",
+  "summary": "The developer keeps ownership while the coding agent packages business context, the current recommendation, and one precise question for a teammate.",
+  "status": "resolved",
+  "options": [
+    { "id": "contextual-ask", "label": "Copy a contextual ask", "description": "Packages the exact gap, business context, current recommendation, and visual so the teammate can answer confidently.", "recommended": true, "highlights": ["developer", "coding-agent", "grill-visuals", "teammate", "render-understanding", "copy-ask", "paste-ask", "teammate-context"] },
+    { "id": "plain-question", "label": "Send only the question", "description": "Fast, but the teammate must reconstruct the feature and why the answer matters.", "highlights": ["developer", "teammate", "paste-ask"] },
+    { "id": "keep-investigating", "label": "Keep investigating alone", "description": "Useful only while repo or documentation evidence remains available locally.", "highlights": ["developer", "coding-agent", "ask-question", "missing-context"] }
+  ],
+  "data": {
+    "participants": [
+      { "id": "developer", "label": "Developer", "description": "Owns the decision and missing context", "kind": "user" },
+      { "id": "coding-agent", "label": "Coding agent", "description": "Runs Grill Me and prepares the ask", "kind": "agent" },
+      { "id": "grill-visuals", "label": "Grill Visuals", "description": "Renders the decision and uncertainty", "kind": "service" },
+      { "id": "teammate", "label": "Teammate", "description": "Answers with company-specific knowledge", "kind": "user" }
+    ],
+    "messages": [
+      { "id": "ask-question", "source": "coding-agent", "target": "developer", "label": "Ask the next precise question", "description": "Use the native question dialogue with the recommended answer first.", "kind": "call" },
+      { "id": "missing-context", "source": "developer", "target": "coding-agent", "label": "I do not have enough context", "description": "The developer chooses the teammate escalation abbreviation.", "kind": "return" },
+      { "id": "render-understanding", "source": "coding-agent", "target": "grill-visuals", "label": "Render current understanding", "description": "Only settled, non-secret context enters the visual artifact.", "kind": "async" },
+      { "id": "return-diagram", "source": "grill-visuals", "target": "coding-agent", "label": "Return local diagram", "description": "The self-contained page stays local unless sharing is explicit.", "kind": "return" },
+      { "id": "copy-ask", "source": "coding-agent", "target": "developer", "label": "Copy ask packet", "description": "Clipboard text includes context, recommendation, exact question, and diagram reference.", "kind": "event" },
+      { "id": "paste-ask", "source": "developer", "target": "teammate", "label": "Paste one confident ask", "description": "The teammate receives enough business and technical context to answer directly.", "kind": "call" },
+      { "id": "teammate-context", "source": "teammate", "target": "developer", "label": "Return company context", "description": "The decision owner brings the answer back into the grilling session.", "kind": "return" }
+    ]
+  }
+}

@@ -1,9 +1,0 @@
-{
-  "version": 1,
-  "id": "checkout-architecture",
-  "family": "architecture",
-  "title": "Checkout architecture",
-  "summary": "Shows the services involved in a checkout request.",
-  "status": "current",
-  "data": {}
-}
