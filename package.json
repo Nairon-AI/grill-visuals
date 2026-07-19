@@ -6,19 +6,38 @@
   "type": "module",
   "private": true,
   "bin": {
-    "grill-visuals": "./bin/grill-visuals.mjs"
+    "grill-visuals": "dist/bin/grill-visuals.js"
   },
   "files": [
-    "bin",
-    "src",
+    "dist",
+    "assets",
+    "examples",
     "LICENSE",
     "THIRD_PARTY_NOTICES.md"
   ],
   "engines": {
     "node": ">=22"
   },
+  "dependencies": {
+    "elkjs": "0.12.0",
+    "inter-ui": "4.1.1",
+    "motion": "12.40.0",
+    "react-grab": "0.1.48",
+    "wrangler": "4.112.0"
+  },
   "scripts": {
-    "check": "node --check bin/grill-visuals.mjs && node --check src/contracts.mjs && node --test",
-    "test": "node --test"
+    "build": "tsx scripts/build.ts",
+    "typecheck": "npm run typecheck:node && npm run typecheck:browser",
+    "typecheck:node": "tsc --project tsconfig.json",
+    "typecheck:browser": "tsc --project tsconfig.browser.json",
+    "test": "npm run build && tsx --test test/*.test.ts",
+    "check": "npm run typecheck && npm test",
+    "prepack": "npm run build"
+  },
+  "devDependencies": {
+    "@types/node": "22.20.1",
+    "esbuild": "0.28.1",
+    "tsx": "4.23.1",
+    "typescript": "7.0.2"
   }
 }

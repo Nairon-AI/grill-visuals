@@ -1,0 +1,98 @@
+{
+  "version": 1,
+  "id": "incident-recovery",
+  "family": "architecture",
+  "title": "Where should failed webhook deliveries recover?",
+  "summary": "The design separates fast acknowledgement from durable processing, with bounded retries and an operator-visible dead-letter path.",
+  "status": "resolved",
+  "options": [
+    { "id": "durable-inbox", "label": "Use a durable inbox", "description": "Stores before acknowledgement, processes asynchronously, and exposes exhausted retries to operators.", "recommended": true, "highlights": ["webhook-edge", "event-store", "delivery-queue", "subscription-worker", "dead-letter-queue", "operator"] },
+    { "id": "inline-retries", "label": "Retry inside the webhook", "description": "Simpler topology, but provider timeouts and duplicate delivery turn recovery into request-path work.", "highlights": ["billing-provider", "webhook-edge", "account-service"] },
+    { "id": "manual-replay", "label": "Use manual replay only", "description": "Gives operators control but creates avoidable toil and slower entitlement recovery.", "highlights": ["dead-letter-queue", "operator"] }
+  ],
+  "data": {
+    "project": {
+      "name": "Linear",
+      "iconDomain": "linear.app"
+    },
+    "nodes": [
+      {
+        "id": "billing-provider",
+        "label": "Stripe",
+        "kind": "external",
+        "domain": "stripe.com",
+        "description": "Emits subscription lifecycle events",
+        "tags": ["signed payloads"]
+      },
+      {
+        "id": "webhook-edge",
+        "label": "Webhook edge",
+        "kind": "entry",
+        "description": "Verifies signatures and acknowledges",
+        "detail": "Returns success only after the event is stored durably.",
+        "sourceRef": "apps/api/webhooks/billing.ts",
+        "tags": ["under 2s"]
+      },
+      {
+        "id": "event-store",
+        "label": "Neon event inbox",
+        "kind": "store",
+        "domain": "neon.tech",
+        "description": "Deduplicates provider event IDs",
+        "tags": ["Postgres", "unique event_id"]
+      },
+      {
+        "id": "delivery-queue",
+        "label": "Upstash queue",
+        "kind": "queue",
+        "domain": "upstash.com",
+        "description": "Buffers subscription updates",
+        "group": "Recovery loop",
+        "tags": ["at least once"]
+      },
+      {
+        "id": "subscription-worker",
+        "label": "Subscription worker",
+        "kind": "job",
+        "description": "Applies idempotent account changes",
+        "group": "Recovery loop",
+        "sourceRef": "workers/subscriptions.ts",
+        "tags": ["5 retries", "backoff"]
+      },
+      {
+        "id": "account-service",
+        "label": "Account service",
+        "kind": "service",
+        "description": "Owns customer entitlement state",
+        "tags": ["transactional"]
+      },
+      {
+        "id": "dead-letter-queue",
+        "label": "Dead-letter queue",
+        "kind": "queue",
+        "description": "Holds events needing intervention",
+        "group": "Recovery loop",
+        "detail": "Every item retains the event ID, final error, attempt count, and next operator action.",
+        "tags": ["manual replay"]
+      },
+      {
+        "id": "operator",
+        "label": "Support operator",
+        "kind": "user",
+        "description": "Inspects and safely replays failures",
+        "tags": ["audited"]
+      }
+    ],
+    "edges": [
+      { "source": "billing-provider", "target": "webhook-edge", "kind": "calls", "label": "webhook" },
+      { "source": "webhook-edge", "target": "event-store", "kind": "writes", "label": "store first" },
+      { "source": "webhook-edge", "target": "delivery-queue", "kind": "publishes", "label": "enqueue" },
+      { "source": "delivery-queue", "target": "subscription-worker", "kind": "triggers", "label": "deliver" },
+      { "source": "subscription-worker", "target": "account-service", "kind": "calls", "label": "apply change" },
+      { "source": "subscription-worker", "target": "event-store", "kind": "writes", "label": "mark result" },
+      { "source": "subscription-worker", "target": "dead-letter-queue", "kind": "publishes", "label": "after 5 failures" },
+      { "source": "operator", "target": "dead-letter-queue", "kind": "reads", "label": "triages" },
+      { "source": "operator", "target": "delivery-queue", "kind": "publishes", "label": "safe replay" }
+    ]
+  }
+}

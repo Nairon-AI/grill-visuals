@@ -1,0 +1,63 @@
+{
+  "version": 1,
+  "id": "replacement-readiness-mind-map",
+  "family": "mind-map",
+  "title": "What must ship before Grill Visuals replaces Sideshow?",
+  "summary": "Replacement requires visual quality, complete diagram coverage, a safe local-first trust boundary, and dependable handoff—not merely prettier architecture maps.",
+  "status": "current",
+  "options": [
+    { "id": "complete-local-slice", "label": "Complete the local slice", "description": "Finishes all seven native families, strict contracts, and visual quality before adding public infrastructure.", "recommended": true, "highlights": ["coverage", "seven-families", "family-identity", "strict-json"] },
+    { "id": "architecture-only", "label": "Ship architecture only", "description": "Delivers the strongest canvas early, but cannot replace Sideshow across real grilling questions.", "highlights": ["visual-quality", "fluid-canvas"] },
+    { "id": "sharing-first", "label": "Build sharing first", "description": "Creates teammate links sooner while leaving diagram coverage and safety gaps unresolved.", "highlights": ["trust", "local-first", "continuity", "handoff"] }
+  ],
+  "data": {
+    "root": {
+      "id": "replacement-ready",
+      "label": "Replacement ready",
+      "description": "Safe default visual system for every Grill Me session",
+      "kind": "decision",
+      "children": [
+        {
+          "id": "visual-quality",
+          "label": "Visual quality",
+          "description": "Polished enough to aid thinking, not decorate it",
+          "kind": "topic",
+          "children": [
+            { "id": "fluid-canvas", "label": "Fluid canvas", "description": "Readable fit, pan, zoom, tracing, and restrained motion", "kind": "action" },
+            { "id": "family-identity", "label": "Family identity", "description": "Each diagram uses its native visual grammar", "kind": "action" }
+          ]
+        },
+        {
+          "id": "coverage",
+          "label": "Diagram coverage",
+          "description": "Every common grilling shape has a strict renderer",
+          "kind": "topic",
+          "children": [
+            { "id": "seven-families", "label": "Seven families", "description": "Architecture through comparison all work locally", "kind": "action" },
+            { "id": "gap-driven", "label": "Gap driven", "description": "Visuals appear only when they materially clarify a question", "kind": "decision" }
+          ]
+        },
+        {
+          "id": "trust",
+          "label": "Trust boundary",
+          "description": "No secret or executable input reaches generated pages",
+          "kind": "risk",
+          "children": [
+            { "id": "strict-json", "label": "Strict JSON", "description": "Unknown fields and malformed references are rejected", "kind": "action" },
+            { "id": "local-first", "label": "Local first", "description": "Public sharing always requires explicit intent", "kind": "decision" }
+          ]
+        },
+        {
+          "id": "continuity",
+          "label": "Session continuity",
+          "description": "Another developer can understand and resume the remaining gaps",
+          "kind": "question",
+          "children": [
+            { "id": "handoff", "label": "Handoff packet", "description": "PR, decision log, unresolved questions, and visuals travel together", "kind": "action" },
+            { "id": "cleanup", "label": "Clean shutdown", "description": "Temporary visual servers stop when the session ends", "kind": "action" }
+          ]
+        }
+      ]
+    }
+  }
+}

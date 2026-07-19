@@ -1,0 +1,24 @@
+{
+  "version": 1,
+  "id": "grill-visuals-rollout-timeline",
+  "family": "timeline",
+  "title": "How should Grill Visuals replace Sideshow without breaking Grill Me?",
+  "summary": "The rollout proves local quality and safety first, then adds explicit public sharing, dogfoods real sessions, and only finally changes the default.",
+  "status": "current",
+  "options": [
+    { "id": "finish-local-gates", "label": "Finish local release gates", "description": "Completes family coverage, stress checks, and dogfood before changing the Grill Me default.", "recommended": true, "highlights": ["families", "load", "dogfood", "default"] },
+    { "id": "share-early", "label": "Ship public sharing early", "description": "Accelerates teammate access but pulls the highest-blast-radius capability ahead of local proof.", "highlights": ["sharing", "default"] },
+    { "id": "retain-sideshow", "label": "Retain Sideshow indefinitely", "description": "Avoids migration risk but keeps the weaker visual system and duplicated workflow.", "highlights": ["architecture", "dogfood"] }
+  ],
+  "data": {
+    "events": [
+      { "id": "contract", "date": "Phase 1", "label": "Lock the contract", "description": "Choose seven bounded families and a local-first trust model", "status": "past" },
+      { "id": "architecture", "date": "Phase 2", "label": "Prove architecture", "description": "Prove polished canvas behavior with safe static output", "status": "past" },
+      { "id": "families", "date": "Phase 3", "label": "Complete all families", "description": "Ship strict schemas, native renderers, and local examples", "status": "current", "detail": "This removes the largest functional gap before dogfood." },
+      { "id": "load", "date": "Phase 4", "label": "Stress and accessibility", "description": "Exercise maximum inputs, long sessions, keyboard, contrast, and mobile", "status": "future" },
+      { "id": "sharing", "date": "Phase 5", "label": "Add explicit sharing", "description": "Deploy and unshare only owned Cloudflare artifacts", "status": "risk", "detail": "Public disclosure is the highest-blast-radius capability." },
+      { "id": "dogfood", "date": "Phase 6", "label": "Dogfood two sessions", "description": "Use real migrations and bugs to find comprehension failures", "status": "future" },
+      { "id": "default", "date": "Phase 7", "label": "Change the default", "description": "Pin a release in Grill Me and retain a narrow fallback", "status": "future" }
+    ]
+  }
+}
